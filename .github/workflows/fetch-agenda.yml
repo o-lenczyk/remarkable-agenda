@@ -23,3 +23,22 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
+    - name: Set the Oauth token
+      env:
+        GCALCLI_OAUTH: ${{ secrets.GCALCLI_OAUTH }}
+      run: echo $GCALCLI_OAUTH > /home/runner/.gcalcli_oauth && ls -altrh
+
+    - name: Fetch calendar
+      env:
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        DEFAULT_CALENDAR: ${{ secrets.DEFAULT_CALENDAR }}
+      run: |
+        gcalcli \
+          --client-id="$CLIENT_ID" \
+          --client-secret="$CLIENT_SECRET" \
+          --noauth_local_webserver \
+          --default-calendar="$DEFAULT_CALENDAR" \
+          --nocolor \
+          calw
