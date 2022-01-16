@@ -51,3 +51,11 @@ jobs:
       with:
         name: agenda
         path: agenda.png
+
+    - name: Commit image
+      run: |
+        git config --global user.name 'Action Bot'
+        git config --global user.email 'actionbot@noreply.com'
+        git add agenda.png
+        git commit --amend --no-edit
+        git push --force
