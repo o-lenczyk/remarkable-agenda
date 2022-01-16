@@ -1,11 +1,11 @@
 ## Goal
-Goal of this project is to display upcoming tasks / meetings using Remarkable screen saver.  
+Goal of this project is to display upcoming tasks / meetings from Google Calendar using Remarkable screen saver.  
 Necessary steps:
 - download all planned tasks from Google Calendar
 - transform it to an image
 - set as Remarkable screen saver
 
-## Automatiom
+## Automation
 - Github Actions will fetch the agenda and create an image
 - Systemd timer will fetch the screen saver, next time when device is turned on
 
