@@ -1,6 +1,9 @@
 name: Fetch agenda from Google Calendar
 
-on: [push]
+on:
+  push:
+  schedule:
+    - cron: '0 5 * * *'
 
 jobs:
   build:
@@ -41,7 +44,7 @@ jobs:
           --noauth_local_webserver \
           --default-calendar="$DEFAULT_CALENDAR" \
           --nocolor \
-          agenda > agenda.txt
+          agenda | tee agenda.txt
 
     - name: Render image
       run: python main.py
