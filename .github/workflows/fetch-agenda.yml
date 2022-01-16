@@ -41,4 +41,13 @@ jobs:
           --noauth_local_webserver \
           --default-calendar="$DEFAULT_CALENDAR" \
           --nocolor \
-          calw
+          agenda > agenda.txt
+
+    - name: Render image
+      run: python main.py
+
+    - name: Upload image
+      uses: actions/upload-artifact@v2
+      with:
+        name: agenda
+        path: agenda.png
