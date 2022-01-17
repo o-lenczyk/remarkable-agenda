@@ -8,6 +8,10 @@ Necessary steps:
 ## Automation
 - Github Actions will fetch the agenda and create an image
 - Systemd timer will fetch the screen saver, next time when device is turned on
+- `xochitl` will be restarted (couple of seconds) to reload suspended screen image
+
+## cron vs Systemd timer
+Cron is not installed by default on Remarable. It is possible to install it via [tolec](https://toltec-dev.org/), but it still does not make much sense, because cron is suspended, when Remarkable is in sleep mode. Because of that, is very easy to miss cron trigger. Advantage of Systemd timer is persistence - it will be triggered right after device is started / resumed.
 
 ## Setting up Systemd timer
 - login via ssh to Remarkable
@@ -23,14 +27,15 @@ Necessary steps:
 
   [Service]
   Type=oneshot
-  ExecStart=date
-  StandardOutput=append:/home/root/a
+  ExecStartPre=wget --no-check-certificate "https://github.com/o-lenczyk/remarkable-agenda/raw/main/agenda.png" -O /usr/share/remarkable/suspended.png
+  ExecStart=systemctl restart xochitl
+  StandardOutput=/home/root/agenda.log
   SuccessExitStatus=DATAERR
   IOSchedulingClass=idle
   ```
 - edit `/etc/systemd/system/agenda.timer`
   ```
-  #  SPDX-License-Identifier: LGPL-2.1+
+    #  SPDX-License-Identifier: LGPL-2.1+
 
   [Unit]
   Description=Remarkable Agenda Timer
@@ -38,12 +43,27 @@ Necessary steps:
 
   [Timer]
   OnStartupSec=5min
-  OnCalendar=*:0/1
+  OnCalendar=07:00:00
   OnUnitActiveSec=1d
+  Persistent=true
 
   [Install]
   WantedBy=timers.target
+
   ```
 - enable timer: `systemctl enable agenda.timer`
-- start timer: `systemctl start agenda.timer`
+- you can trigger timer manually: `systemctl start agenda.timer`
 - list timers: `systemctl list-timers`
+- output should be similar to:
+  ```
+  NEXT                         LEFT     LAST                         PASSED       UNIT                         ACTIVATES
+  Tue 2022-01-18 07:00:00 UTC  7h left  Mon 2022-01-17 23:09:35 UTC  1min 41s ago agenda.timer                 agenda.service
+  Tue 2022-01-18 20:40:55 UTC  21h left Mon 2022-01-17 09:54:17 UTC  13h ago      systemd-tmpfiles-clean.timer systemd-tmpfiles-clean.service
+  ```
+
+## Setting up the repository
+Set up those repository secrets:
+- `CLIENT_ID`
+- `CLIENT_SECRET`
+- `DEFAULT_CALENDAR`
+- `GCALCLI_OAUTH`

@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: '0 5 * * *'
 
+env:
+  TZ: "Europe/Warsaw"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,12 +41,15 @@ jobs:
         CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
         DEFAULT_CALENDAR: ${{ secrets.DEFAULT_CALENDAR }}
       run: |
+        apt update && apt install tzdata -y
+
         gcalcli \
           --client-id="$CLIENT_ID" \
           --client-secret="$CLIENT_SECRET" \
           --noauth_local_webserver \
           --default-calendar="$DEFAULT_CALENDAR" \
           --nocolor \
+          --locale=pl_PL \
           agenda | tee agenda.txt
 
     - name: Render image
