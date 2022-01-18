@@ -17,8 +17,6 @@ Cron is not installed by default on Remarable. It is possible to install it via 
 - login via ssh to Remarkable
 - edit `/etc/systemd/system/agenda.service`
   ```
-  #  SPDX-License-Identifier: LGPL-2.1+
-
   [Unit]
   Description=Remarkable Agenda
   DefaultDependencies=no
@@ -32,14 +30,15 @@ Cron is not installed by default on Remarable. It is possible to install it via 
   StandardOutput=/home/root/agenda.log
   SuccessExitStatus=DATAERR
   IOSchedulingClass=idle
+  Restart=on-failure
+  RestartSec=10
   ```
 - edit `/etc/systemd/system/agenda.timer`
   ```
-    #  SPDX-License-Identifier: LGPL-2.1+
-
   [Unit]
   Description=Remarkable Agenda Timer
   Documentation=someday
+  After=network-online.target
 
   [Timer]
   OnStartupSec=5min
@@ -49,7 +48,6 @@ Cron is not installed by default on Remarable. It is possible to install it via 
 
   [Install]
   WantedBy=timers.target
-
   ```
 - enable timer: `systemctl enable agenda.timer`
 - you can trigger timer manually: `systemctl start agenda.timer`
@@ -67,3 +65,6 @@ Set up those repository secrets:
 - `CLIENT_SECRET`
 - `DEFAULT_CALENDAR`
 - `GCALCLI_OAUTH`
+
+## How to get those secrets?
+Folow those [instructions](https://github.com/insanum/gcalcli#howto) and configure [gcalcli](https://github.com/insanum/gcalcli) locally first.

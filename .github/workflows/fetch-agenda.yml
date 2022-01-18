@@ -2,7 +2,7 @@ name: Fetch agenda from Google Calendar
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '11 5 * * *'
 
 env:
   TZ: "Europe/Warsaw"
